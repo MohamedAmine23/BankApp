@@ -1,0 +1,96 @@
+﻿<f:UserControlBase x:Class="prbd_2122_g19.View.TransferCardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:m="clr-namespace:prbd_2122_g19.Model"
+             xmlns:v="clr-namespace:prbd_2122_g19.View"
+             xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+              d:DataContext="{d:DesignInstance Type=m:Transfer, IsDesignTimeCreatable=True}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" >
+    <Border  BorderThickness="2" Width="660" Height="auto" Padding="10,10,10,10" BorderBrush="Gray" CornerRadius="7" >
+        <Grid>   
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock FontWeight="Bold" HorizontalAlignment="Left" FontSize="14" Text="{Binding Communication}"/>
+            <TextBlock  HorizontalAlignment="Right" FontWeight="Bold" FontSize="14"  Text="{Binding AmountSigned,Converter={v:CurrencyToStringWithPlusSignConverter}}" Style="{StaticResource AmountStyle}"/>
+
+
+            <TextBlock Grid.Row="1" HorizontalAlignment="Left" >
+                <Run Text="Created on: "/>
+                <Run FontWeight="Bold" Text="{Binding CreationDate,StringFormat={} {0:dd/MM/yyyy}}"/>
+            </TextBlock >
+           
+            <TextBlock Grid.Row="1" HorizontalAlignment="center" >
+                <Run Text="Effective on: "/>
+                <Run FontWeight="Bold" Text="{Binding EffectiveDate,StringFormat= {}{0:dd/MM/yyyy}}"/>
+            </TextBlock>
+
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock>
+                <Run Text="Created by:"/>
+                <Run FontWeight="Bold" Text="{Binding Owner.FirstName}"/>
+                <Run FontWeight="Bold" Text="{Binding Owner.Name}"/>
+                </TextBlock>
+                <TextBlock Grid.Column="1" Text="{Binding CurrentSolde,Converter={v:CurrencyToStringConverter} }" Style="{StaticResource Saldo}" />
+            </Grid>
+
+
+            <TextBlock Grid.Row="3">
+                <Run Text="From: " />
+                <Run FontWeight="Bold" Text="{Binding DebitAccount.Description}"/>
+                <Run  Text=" ( "/>
+                <Run  Text="{Binding DebitAccount.Iban}" />
+                <Run  Text=" ) "/>
+            </TextBlock>
+            <TextBlock Grid.Row="4" >
+                <Run  Text="To: "/>
+                <Run FontWeight="Bold" Text="{Binding CreditAccount.Description}" />
+                <Run  Text=" ( "/>
+                <Run  Text="{Binding CreditAccount.Iban}" />
+                <Run  Text=" ) "/>
+            </TextBlock>
+            <Grid Grid.Row="5">
+                <Grid  Visibility="{Binding IsFutur, Converter={f:BoolToVisibleConverter}}">
+                    <TextBlock Foreground="blue" Text="This transaction is foreseen in the futur. You may Cancel it."/>
+                    <Button  HorizontalAlignment="Right" Height="20" Width="auto" Content="Cancel"  Command="{Binding CancelTransfer, ElementName=vm}" CommandParameter="{Binding .}"/>
+                </Grid>
+                <Grid  Visibility="{Binding IsRefused, Converter={f:BoolToVisibleConverter}}">
+                    <TextBlock Foreground="red">
+                        <Run Text="This transaction has been refused because it would have given you a balance below the allowed floor value of"/>
+                        <Run FontWeight="bold" Text="{Binding Representative.InternalAccount.Floor,ElementName=vm}"/>
+                    </TextBlock>  
+                    
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="250"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock HorizontalAlignment="center" Text="Category:"/>
+                <ComboBox HorizontalAlignment="center" Width="250" Grid.Column="1" ItemsSource="{Binding Categories,ElementName=vm}" Text="{Binding Category.Name,ElementName=transferList}" SelectedItem="{Binding Category}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock  Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+        </Grid>
+    </Border>
+</f:UserControlBase>
